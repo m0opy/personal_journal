@@ -2,8 +2,6 @@ import './JournalItem.css'
 
 function JournalItem({ title, text, date }) {
   const formatedDate = new Intl.DateTimeFormat('ru-RU').format(date)
-  // let now = new Date()
-  // const formatedDate = now.toLocaleDateString()
   return (
     <>
       <h2 className="journal-item__title">{title}</h2>

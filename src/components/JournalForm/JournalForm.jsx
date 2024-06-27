@@ -1,57 +1,76 @@
 import styles from './JournalForm.module.css'
 import Button from '../Button/Button'
-import { useState } from 'react'
+import { useEffect, useReducer, useRef } from 'react'
 import classNames from 'classnames'
+import { INITIAL_STATE, formReducer } from './JournalForm.state'
+import Input from '../Input/Input'
 
 function JournalForm({ onSubmit }) {
-  const [formValidState, setFormValidState] = useState({
-    title: true,
-    post: true,
-    date: true,
-  })
+  const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE)
+  // Диструктурируем State на маленькие компоненты
+  const { isValid, isFormReadyToSubmit, values } = formState
+  const titleRef = useRef()
+  const dateRef = useRef()
+  const postRef = useRef()
 
-  const addJornalItem = (e) => {
+  const focusError = (isValid) => {
+    switch (true) {
+      case !isValid.title:
+        titleRef.current.focus()
+        break
+      case !isValid.date:
+        dateRef.current.focus()
+        break
+      case !isValid.post:
+        postRef.current.focus()
+        break
+    }
+  }
+
+  useEffect(() => {
+    let timerId
+    if (!isValid.date || !isValid.post || !isValid.title) {
+      focusError(isValid)
+      timerId = setTimeout(() => {
+        dispatchForm({ type: 'RESET_VALIDITY' })
+      }, 2000)
+    }
+    return () => {
+      clearTimeout(timerId) // Функция будет вызываться, когда наш компонент исчезает из рендера
+      // (т.е. если мы вызовем эффект, когда предыдущий еще будет работать, вызывется clearTimeout и эффекты не будут совместно работать)
+    }
+  }, [isValid])
+
+  useEffect(() => {
+    if (isFormReadyToSubmit) {
+      onSubmit(values)
+      dispatchForm({ type: 'CLEAR' })
+    }
+  }, [isFormReadyToSubmit, values, onSubmit])
+
+  const onChange = (e) => {
+    dispatchForm({
+      type: 'SET_VALUE',
+      payload: { [e.target.name]: e.target.value },
+    })
+  }
+
+  const addJournalItem = (e) => {
     e.preventDefault()
-    const formData = new FormData(e.target)
-    const fromProps = Object.fromEntries(formData)
-    let isFormValid = true
-    if (!fromProps.title?.trim().length) {
-      setFormValidState((state) => ({ ...state, title: false }))
-      isFormValid = false
-    } else {
-      setFormValidState((state) => ({ ...state, title: true }))
-    }
-    if (!fromProps.post?.trim().length) {
-      setFormValidState((state) => ({ ...state, post: false }))
-      isFormValid = false
-    } else {
-      setFormValidState((state) => ({ ...state, post: true }))
-    }
-    if (!fromProps.date) {
-      setFormValidState((state) => ({ ...state, date: false }))
-      isFormValid = false
-    } else {
-      setFormValidState((state) => ({ ...state, date: true }))
-    }
-    if (!isFormValid) {
-      return
-    }
-    onSubmit(fromProps)
+    dispatchForm({ type: 'SUBMIT' })
   }
 
   return (
-    <form className={styles['journal-form']} onSubmit={addJornalItem}>
+    <form className={styles['journal-form']} onSubmit={addJournalItem}>
       <div>
-        <input
+        <Input
           type="text"
           name="title"
-          className={classNames(
-            styles['input'],
-            styles['journal-form__title'],
-            {
-              [styles['invalid']]: !formValidState.title,
-            }
-          )}
+          onChange={onChange}
+          value={values.title}
+          ref={titleRef}
+          appearence="title"
+          isValid={isValid.title}
         />
       </div>
       <div className={styles['form-row']}>
@@ -59,13 +78,14 @@ function JournalForm({ onSubmit }) {
           <img src="/date.svg" alt="Calendar" />
           <span>Дата</span>
         </label>
-        <input
+        <Input
           type="date"
           name="date"
           id="date"
-          className={classNames(styles['input'], styles['journal-form__date'], {
-            [styles['invalid']]: !formValidState.date,
-          })}
+          ref={dateRef}
+          onChange={onChange}
+          value={values.date}
+          isValid={isValid.date}
         />
       </div>
 
@@ -74,21 +94,25 @@ function JournalForm({ onSubmit }) {
           <img src="/tag.svg" alt="Folder" />
           <span>Метки</span>
         </label>
-        <input
+        <Input
           type="text"
           name="tag"
           id="tag"
-          className={classNames(styles['input'], styles['journal-form__tag'])}
+          onChange={onChange}
+          value={values.tag}
+          isValid={isValid.tag}
         />
       </div>
 
       <textarea
         name="post"
-        id=""
         cols="30"
         rows="10"
+        onChange={onChange}
+        value={values.post}
+        ref={postRef}
         className={classNames(styles['input'], styles['journal-form__post'], {
-          [styles['invalid']]: !formValidState.post,
+          [styles['invalid']]: !isValid.post,
         })}
       ></textarea>
       <Button

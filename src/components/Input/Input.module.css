@@ -1,0 +1,25 @@
+.input {
+    color: rgb(255, 255, 255);
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    border-radius: 3px;
+    outline: none;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 18px;
+    font-family: 'Source Sans 3', sans-serif;
+    width: 100%;
+}
+
+.input-title {
+    font-size: 32px;
+    line-height: 40px;
+    margin-bottom: 15px;
+}
+
+.invalid {
+    border: 1px solid red;
+    background: rgb(113, 13, 13);
+}
