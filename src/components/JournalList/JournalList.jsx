@@ -17,6 +17,7 @@ function JournalList({ items }) {
       return -1
     }
   }
+
   return (
     <div className="journal-list">
       {items
@@ -24,7 +25,13 @@ function JournalList({ items }) {
         .sort(sortItems)
         .map((el) => (
           <CardButton key={el.id}>
-            <JournalItem title={el.title} post={el.post} date={el.date} />
+            <JournalItem
+              title={el.title}
+              post={
+                el.post.length > 33 ? el.post.slice(0, 30) + '...' : el.post
+              }
+              date={el.date}
+            />
           </CardButton>
         ))}
     </div>
