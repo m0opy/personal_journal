@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 export function useLocalStorage(key) {
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
 
   // Читаем данные из localStorage
   useEffect(() => {
