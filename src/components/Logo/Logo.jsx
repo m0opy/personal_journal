@@ -1,4 +1,5 @@
 import styles from './Logo.module.css'
+import { memo } from 'react'
 
 export function Logo({ image }) {
   console.log('Logo')
@@ -9,4 +10,4 @@ export function Logo({ image }) {
   )
 }
 
-export default Logo
+export default memo(Logo)
