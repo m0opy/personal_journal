@@ -21,6 +21,7 @@
 
 .invalid {
     border: 1px solid red;
+    outline: 1px solid red;
     background: rgb(113, 13, 13);
 }
 
@@ -57,4 +58,25 @@
 
 .form-btn {
     max-width: 145px;
+}
+
+.form_header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.delete-btn {
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
+    height: 30px;
+    width: 30px;
+}
+
+.delete-btn:hover {
+    background: rgb(255, 255, 255, 0.05);
+    border-radius: 50%;
 }

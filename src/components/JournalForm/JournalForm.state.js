@@ -39,5 +39,10 @@ export function formReducer(state, action) {
       }
     case 'SET_VALUE':
       return { ...state, values: { ...state.values, ...action.payload } }
+    case 'UNSUBMIT':
+      return {
+        ...state,
+        isFormReadyToSubmit: false,
+      }
   }
 }
